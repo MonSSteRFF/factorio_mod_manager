@@ -49,7 +49,17 @@ The modification's texts are in Russian when the game is in Russian, and in Engl
 
 Requirements: Windows 10/11 x64 and Factorio for Windows with `bin\x64\factorio.pdb` in its folder. The Steam version has this file.
 
-The ready build is in `dist/`:
+### Installing from a release
+
+1. Open the [releases page](https://github.com/MonSSteRFF/factorio_mod_manager/releases) and download the `.zip` archive from the **Assets** section of the latest release.
+2. Extract the archive to any folder, for example the desktop (right-click the archive → "Extract All..."). Do not extract it into the game folder, the script copies the files where they belong.
+3. Close Factorio.
+4. In the extracted folder, double-click `install.bat`. Run it from the extracted folder, not from inside the archive: without the `files` folder next to it the script cannot find the DLLs.
+5. Start the game and open the Mods window.
+
+To update, download the archive of the new release and run its `install.bat` the same way. To remove the modification, run `uninstall.bat` (see below).
+
+The archive has the same layout as the `dist/` folder produced by [building from source](#building-from-source):
 
 ```
 dist/
