@@ -1,65 +1,65 @@
-# Пакеты модов для Factorio
+# Mod packs for Factorio
 
-**Русский** | [English](README.en.md)
+[Русский](README.ru.md) | **English**
 
-Нативная модификация клиента Factorio для Windows. Она добавляет в окно **«Моды»** пакеты модов: именованные наборы включённых модов, между которыми можно переключаться в пару кликов.
+A native modification of the Factorio client for Windows. It adds **mod packs** to the **Mods** window: named sets of enabled mods that you can switch between in a couple of clicks.
 
-Это **не обычный мод** из mod portal. Lua-моды Factorio в главном меню не выполняются и не могут менять окно модов. Поэтому модификация — это DLL, которую игра загружает при старте. Сам `factorio.exe` не изменяется.
+This is **not a regular mod** from the mod portal. Factorio's Lua mods do not run in the main menu and cannot change the Mods window. The modification is therefore a DLL that the game loads at start-up. `factorio.exe` itself is not changed.
 
-Проверено на Factorio 2.1.21 (Steam, Windows 11).
+Tested on Factorio 2.1.21 (Steam, Windows 11).
 
-![Вкладка «Управление» с выбранным пакетом QOL](docs/screenshots/installed-tab-qol.png)
+![The Installed tab with the QOL pack selected](docs/screenshots/installed-tab-qol.png)
 
-## Что она делает
+## What it does
 
-### Вкладка «Управление»
+### The "Installed" tab
 
-Слева от поля поиска появляется панель пакетов: выпадающий список и кнопки «Создать», «Переименовать», «Удалить».
+A pack bar appears to the left of the search box: a drop-down list and the Create, Rename and Delete buttons.
 
-![Выбран пакет «Base space age»: включены только DLC](docs/screenshots/installed-tab-base-space-age.png)
+![The "Base space age" pack selected: only the DLCs are enabled](docs/screenshots/installed-tab-base-space-age.png)
 
-- **Выпадающий список** показывает выбранный пакет. Пока пакетов нет, в нём написано «Нет пакетов». При выборе пакета галочки модов расставляются по нему: моды пакета включаются, остальные выключаются, `base` не трогается. Применяются изменения **штатной кнопкой «Подтвердить»**, и игра перезапускается как обычно. Если закрыть окно без подтверждения, игра предложит отменить изменения, и ничего не поменяется.
-- **Создать** сохраняет все моды, отмеченные сейчас галочками, в новый пакет. Название вводится прямо в панели, затем «OK» или «Отмена».
-- **Переименовать** меняет название выбранного пакета. Поле заполнено текущим названием.
-- **Удалить** удаляет выбранный пакет после вопроса «Удалить пакет «…»?» с «Да» и «Нет». Галочки модов при этом не меняются.
+- The **drop-down list** shows the selected pack. While there are no packs it says "No mod packs". Choosing a pack sets the mod checkboxes from it: the pack's mods are enabled, all others disabled, `base` is left alone. The changes are applied with the game's own **Confirm** button and the game restarts as usual. If you close the window without confirming, the game offers to discard the changes and nothing changes.
+- **Create** saves all mods that are currently checked into a new pack. The name is typed right in the bar, then OK or Cancel.
+- **Rename** changes the name of the selected pack. The field starts with the current name.
+- **Delete** removes the selected pack after asking "Delete pack "…"?" with Yes and No. The mod checkboxes are not changed.
 
-Пустые названия и повторы (без учёта регистра, `Test` и `test` считаются одним названием) не принимаются, ошибка показывается красным текстом в панели. Если в пакете есть мод, который не установлен, остальные моды включатся, а модификация покажет список отсутствующих.
+Empty names and duplicates (case-insensitive: `Test` and `test` are the same name) are rejected with a red message in the bar. If a pack contains a mod that is not installed, the other mods are enabled and the modification lists the missing ones.
 
-### Вкладка «Пакеты модов»
+### The "Mod packs" tab
 
-Новая вкладка правее «Обновлений». Здесь удобно собирать состав пакета.
+A new tab to the right of "Updates" for putting a pack together.
 
-![Вкладка «Пакеты модов»: пакет «Base space age» и информация о моде справа](docs/screenshots/mod-packs-tab-base-space-age.png)
+![The Mod packs tab: the "Base space age" pack with mod details on the right](docs/screenshots/mod-packs-tab-base-space-age.png)
 
-- Две таблицы в том же стиле, что на «Управлении», каждая на половину ширины. Слева все установленные моды, кроме `base` и тех, что уже в пакете. Справа моды выбранного пакета. Над таблицами указано число модов.
-- В строке: название, версия и квадратная кнопка. `>` добавляет мод в пакет, `<` убирает его. Изменения сохраняются сразу.
-- Стрелка в заголовке «Название» сортирует таблицу по алфавиту в одну или другую сторону, у каждой таблицы своё направление.
-- Поиск (лупа) фильтрует **обе** таблицы одновременно.
-- Щелчок по моду показывает справа ту же информацию о нём, что и на «Управлении».
-- Моды пакета, которые не установлены, выделены красным и помечены «не установлен».
-- Выбранный пакет общий с вкладкой «Управление». Но здесь выбор пакета **не** меняет галочки: пакет только открывается для редактирования.
+- Two tables in the same style as the Installed tab, each taking half of the width. On the left, all installed mods except `base` and those already in the pack. On the right, the mods of the selected pack. The number of mods is shown above each table.
+- Each row has the name, the version and a square button. `>` adds the mod to the pack, `<` removes it. Changes are saved immediately.
+- The arrow in the "Name" header sorts the table alphabetically one way or the other; each table has its own direction.
+- The search (magnifier) filters **both** tables at once.
+- Clicking a mod shows the same details on the right as on the Installed tab.
+- Mods of the pack that are not installed are shown in red and marked "not installed".
+- The selected pack is shared with the Installed tab, but selecting a pack here does **not** change the checkboxes: the pack is only opened for editing.
 
-![Пакет «QOL» на вкладке «Пакеты модов»](docs/screenshots/mod-packs-tab-qol.png)
+![The "QOL" pack on the Mod packs tab](docs/screenshots/mod-packs-tab-qol.png)
 
-### Язык
+### Language
 
-Тексты модификации на русском, если игра на русском, и на английском во всех остальных случаях. Это касается и установочных скриптов.
+The modification's texts are in Russian when the game is in Russian, and in English otherwise. The same goes for the install scripts.
 
-## Установка и удаление
+## Installing and removing
 
-Нужно: Windows 10/11 x64 и Factorio для Windows, в папке которой есть `bin\x64\factorio.pdb`. В Steam-версии этот файл есть.
+Requirements: Windows 10/11 x64 and Factorio for Windows with `bin\x64\factorio.pdb` in its folder. The Steam version has this file.
 
-### Установка из релиза
+### Installing from a release
 
-1. Откройте страницу [релизов](https://github.com/MonSSteRFF/factorio_mod_manager/releases) и скачайте `.zip`-архив из раздела **Assets** последнего релиза.
-2. Распакуйте архив в любую папку, например на рабочий стол (правой кнопкой по архиву → «Извлечь все…»). Распаковывать в папку игры не нужно, скрипт сам скопирует файлы куда надо.
-3. Закройте Factorio.
-4. В распакованной папке запустите `install.bat` двойным щелчком. Запускайте его именно из распакованной папки, а не изнутри архива: без соседней папки `files` скрипт не найдёт DLL.
-5. Запустите игру и откройте окно «Моды».
+1. Open the [releases page](https://github.com/MonSSteRFF/factorio_mod_manager/releases) and download the `.zip` archive from the **Assets** section of the latest release.
+2. Extract the archive to any folder, for example the desktop (right-click the archive → "Extract All..."). Do not extract it into the game folder, the script copies the files where they belong.
+3. Close Factorio.
+4. In the extracted folder, double-click `install.bat`. Run it from the extracted folder, not from inside the archive: without the `files` folder next to it the script cannot find the DLLs.
+5. Start the game and open the Mods window.
 
-Чтобы обновить модификацию, скачайте архив нового релиза и так же запустите его `install.bat`. Чтобы удалить, запустите `uninstall.bat` (подробнее ниже).
+To update, download the archive of the new release and run its `install.bat` the same way. To remove the modification, run `uninstall.bat` (see below).
 
-Архив устроен так же, как папка `dist/`, которая получается при [сборке из исходников](#сборка-из-исходников):
+The archive has the same layout as the `dist/` folder produced by [building from source](#building-from-source):
 
 ```
 dist/
@@ -70,119 +70,119 @@ dist/
   files/VERSION
 ```
 
-### Установка: `install.bat`
+### Installing: `install.bat`
 
-Запустите двойным щелчком. Если игра установлена не в Steam или скрипт её не нашёл, передайте путь к игре аргументом:
+Double-click it. If the game is not installed through Steam or the script cannot find it, pass the game folder as an argument:
 
 ```bat
 install.bat "D:\Games\Factorio"
 ```
 
-Что делает скрипт:
-1. Находит игру: по аргументу, а без него в библиотеках Steam (`libraryfolders.vdf`).
-2. Проверяет, что есть `bin\x64\factorio.exe` и `bin\x64\factorio.pdb`.
-3. Если Factorio запущена, просит **закрыть клиент игры** и ждёт нажатия клавиши. Просьба повторяется, пока игра открыта. Чтобы отменить установку, закройте окно скрипта.
-4. Если в `bin\x64` уже лежит **чужой** `winmm.dll`, останавливается и ничего не перезаписывает.
-5. Копирует `winmm.dll` и `modpacks.dll` в `bin\x64` и записывает рядом файл-метку `modpacks.install` со списком своих файлов и версией.
+What the script does:
+1. Finds the game: from the argument, otherwise in the Steam libraries (`libraryfolders.vdf`).
+2. Checks that `bin\x64\factorio.exe` and `bin\x64\factorio.pdb` exist.
+3. If Factorio is running, asks you to **close the game client** and waits for a key press. It keeps asking while the game is open. Close the script window to cancel.
+4. If `bin\x64` already contains a `winmm.dll` that **is not ours**, it stops and overwrites nothing.
+5. Copies `winmm.dll` and `modpacks.dll` to `bin\x64` and writes the marker file `modpacks.install` next to them with the list of its files and the version.
 
-Повторный запуск `install.bat` обновляет модификацию до версии из папки со скриптом. Права администратора не нужны, если папка игры доступна вам на запись.
+Running `install.bat` again updates the modification to the version next to the script. No administrator rights are needed if you can write to the game folder.
 
-### Удаление: `uninstall.bat`
+### Removing: `uninstall.bat`
 
-1. Находит игру так же, как установщик.
-2. Если игра запущена, просит закрыть её.
-3. Удаляет **только** файлы, перечисленные в `modpacks.install`, и саму метку. Чужие файлы, например другие DLL в `bin\x64`, не трогает.
+1. Finds the game the same way as the installer.
+2. If the game is running, asks you to close it.
+3. Deletes **only** the files listed in `modpacks.install`, then the marker itself. Other files, such as other DLLs in `bin\x64`, are not touched.
 
-После удаления игра в исходном состоянии. Ваши пакеты (`mod-packs.json`) остаются: если поставить модификацию снова, они вернутся.
+After that the game is back to its original state. Your packs (`mod-packs.json`) are kept and come back if you install the modification again.
 
-### Где лежат данные
+### Where the data is
 
-| Что | Где |
+| What | Where |
 |---|---|
-| Пакеты | `%APPDATA%\Factorio\mods\mod-packs.json` (формат — в [docs/mod-packs-format.md](docs/mod-packs-format.md)) |
-| Лог модификации | `%APPDATA%\Factorio\modpacks\modpacks.log` |
-| Кэш символов | `%APPDATA%\Factorio\modpacks\symcache.json` |
+| Packs | `%APPDATA%\Factorio\mods\mod-packs.json` (format in [docs/mod-packs-format.md](docs/mod-packs-format.md), in Russian) |
+| Modification log | `%APPDATA%\Factorio\modpacks\modpacks.log` |
+| Symbol cache | `%APPDATA%\Factorio\modpacks\symcache.json` |
 
-Лог и кэш можно удалить в любой момент, это ни на что не повлияет.
+The log and the cache can be deleted at any time without side effects.
 
-## Как это работает
+## How it works
 
 ```
- Steam запускает factorio.exe
+ Steam starts factorio.exe
       |
       v
- Windows загружает winmm.dll из папки игры (наш прокси)
-      |  все вызовы winmm пробрасываются в системную winmm.dll
-      |  и загружается modpacks.dll
+ Windows loads winmm.dll from the game folder (our proxy)
+      |  every winmm call is forwarded to the system winmm.dll
+      |  and modpacks.dll is loaded
       v
- modpacks.dll в фоновом потоке (игра стартует без задержки):
-      1. находит по factorio.pdb функции и поля окна «Моды»
-         (первый раз ~3 с, дальше из кэша до следующего обновления игры)
-      2. если всё найдено, ставит хуки на создание окна «Моды»
-         если чего-то нет, НЕ ставит ничего, игра работает как обычно
+ modpacks.dll, on a background thread (the game starts without delay):
+      1. looks up the functions and fields of the Mods window in factorio.pdb
+         (~3 s the first time, then from the cache until the next game update)
+      2. if everything is found, hooks the creation of the Mods window;
+         if anything is missing, hooks NOTHING and the game runs as usual
       v
- окно «Моды» строится штатно, а модификация добавляет в него
- панель пакетов и вкладку «Пакеты модов» виджетами самого движка
+ the Mods window is built by the game, and the modification adds
+ the pack bar and the Mod packs tab using the engine's own widgets
 ```
 
-**Обновления игры.** Адреса не зашиты в код, а берутся из `factorio.pdb` той версии, что установлена. Поэтому обычные обновления модификация переживает без пересборки. Если Wube переделает окно модов и нужных функций не окажется, модификация просто отключится, а причина будет в логе. Подробности о движке и чек-лист проверки после обновления — в [docs/engine-notes.md](docs/engine-notes.md).
+**Game updates.** No addresses are hard-coded; they come from the `factorio.pdb` of the installed version. Regular updates therefore work without rebuilding. If Wube reworks the Mods window and something the modification needs is gone, it simply stays off and the log says why. Engine details and the post-update checklist are in [docs/engine-notes.md](docs/engine-notes.md) (in Russian).
 
-**Ограничения.**
-- Только Windows x64 и сборки с `factorio.pdb`.
-- Работает только в окне «Моды» главного меню.
-- Настройки модов и версии модов в пакет не сохраняются.
-- Это неофициальная модификация закрытого клиента, Wube её не поддерживает. Антивирус может насторожиться на прокси-DLL, исходники открыты.
+**Limitations.**
+- Windows x64 only, and only builds that ship `factorio.pdb`.
+- Works only in the main menu's Mods window.
+- Mod settings and mod versions are not stored in packs.
+- This is an unofficial modification of a closed-source client and is not supported by Wube. Antivirus software may be wary of the proxy DLL; the source code is open.
 
-## Сборка из исходников
+## Building from source
 
-Что нужно:
-- **Visual Studio 2022** (Community подходит) с нагрузкой «Разработка классических приложений на C++»: MSVC x64 и Windows SDK.
-- **CMake 3.20+** на Windows: компонент «C++ CMake tools for Windows» в Visual Studio Installer или `winget install Kitware.CMake`.
-- Для служебных скриптов (обычно не нужно): WSL с `python3`, `llvm-readobj` и `llvm-pdbutil`.
+Requirements:
+- **Visual Studio 2022** (Community is fine) with the "Desktop development with C++" workload: MSVC x64 and the Windows SDK.
+- **CMake 3.20+** on Windows: the "C++ CMake tools for Windows" component in the Visual Studio Installer, or `winget install Kitware.CMake`.
+- For the helper scripts (usually not needed): WSL with `python3`, `llvm-readobj` and `llvm-pdbutil`.
 
-Сторонние библиотеки уже лежат в `third_party/` (см. [third_party/README.md](third_party/README.md)): MinHook, nlohmann/json, doctest.
+Third-party libraries are already in `third_party/` (see [third_party/README.md](third_party/README.md)): MinHook, nlohmann/json, doctest.
 
-### Из Windows
+### From Windows
 
 ```bat
 build.cmd
 ```
 
-### Из WSL
+### From WSL
 
 ```bash
 ./build.sh
 ```
 
-Оба скрипта собирают Release x64, запускают юнит-тесты и раскладывают результат в `dist/` вместе с `install.bat` и `uninstall.bat`.
+Both build Release x64, run the unit tests and put the result into `dist/` together with `install.bat` and `uninstall.bat`.
 
-### Проверка совместимости с версией игры
+### Checking a game version
 
-Перед запуском новой версии Factorio можно проверить, найдёт ли модификация всё, что ей нужно:
+Before starting a new Factorio version you can check that the modification finds everything it needs:
 
 ```bat
 build\Release\modpacks_symtool.exe "C:\...\Factorio\bin\x64\factorio.exe"
 ```
 
-или из WSL: `scripts/check-symbols.sh "/mnt/c/.../Factorio/bin/x64"`.
+or from WSL: `scripts/check-symbols.sh "/mnt/c/.../Factorio/bin/x64"`.
 
-### Структура исходников
+### Source layout
 
 ```
-src/proxy/   прокси winmm.dll (заглушки экспортов генерирует scripts/gen-winmm-proxy.py)
-src/core/    загрузка, разрешение символов по PDB, кэш, хуки, лог, обёртки над движком
-src/packs/   логика и хранение пакетов (без зависимостей от движка)
-src/i18n/    строки RU/EN и выбор языка
-src/ui/      панель пакетов, вкладка «Пакеты модов»
-scripts/     install.bat, uninstall.bat, служебные скрипты (см. scripts/README.md)
-tests/       юнит-тесты (doctest) и modpacks_symtool
-docs/        заметки о движке, формат mod-packs.json, скриншоты
-openspec/    спецификации и план изменения (OpenSpec)
+src/proxy/   winmm.dll proxy (export stubs generated by scripts/gen-winmm-proxy.py)
+src/core/    start-up, symbol resolution from the PDB, cache, hooks, log, engine wrappers
+src/packs/   pack logic and storage (no engine dependencies)
+src/i18n/    RU/EN strings and language selection
+src/ui/      pack bar, Mod packs tab
+scripts/     install.bat, uninstall.bat, helper scripts (see scripts/README.md)
+tests/       unit tests (doctest) and modpacks_symtool
+docs/        engine notes, mod-packs.json format, screenshots
+openspec/    specs and the change plan (OpenSpec)
 ```
 
-### Перегенерация прокси
+### Regenerating the proxy
 
-Нужна, только если меняется набор экспортов системной `winmm.dll`:
+Only needed if the set of exports of the system `winmm.dll` changes:
 
 ```bash
 python3 -I scripts/gen-winmm-proxy.py /mnt/c/Windows/System32/winmm.dll src/proxy
