@@ -38,6 +38,8 @@ enum class Str {
     NotInstalled,
     TipAddToPack,
     TipRemoveFromPack,
+    DraftMark,
+    TipDraft,
     Count,
 };
 

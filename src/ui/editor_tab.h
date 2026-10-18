@@ -63,6 +63,7 @@ private:
     void BuildSide(engine::Widget* body, Side& side);
     void Fill(Side& side, const std::vector<Row*>& rows, bool left);
     void Select(const Row* row);
+    void Highlight();
 
     Window& window_;
     engine::Widget* tab_ = nullptr;
@@ -73,6 +74,7 @@ private:
     std::map<std::string, Row> rows_;  // by internal name
     std::wstring filter_;              // lowercased search text
     const Row* selected_ = nullptr;    // shown in the mod info pane
+    bool highlighting_ = false;        // TableSelectRow calls our selection handlers
 };
 
 }  // namespace modpacks

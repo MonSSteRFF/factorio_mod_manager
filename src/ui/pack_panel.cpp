@@ -23,10 +23,13 @@ PackPanel::PackPanel(Window& window, bool applyOnSelect) : window_(window), appl
     normal_ = engine::NewHorizontalFlow("horizontal_flow");
     list_ = engine::NewDropDown("dropdown");
     engine::SetToolTip(list_, std::string(Text(Str::TipPackList)));
+    draftMark_ = engine::NewLabel(std::string(Text(Str::DraftMark)), "bold_label");
+    engine::SetToolTip(draftMark_, std::string(Text(Str::TipDraft)));
     engine::Widget* create = Button(Str::ButtonCreate, Str::TipCreate);
     rename_ = Button(Str::ButtonRename, Str::TipRename);
     remove_ = Button(Str::ButtonDelete, Str::TipDelete);
     engine::Add(normal_, list_);
+    engine::Add(normal_, draftMark_);
     engine::Add(normal_, create);
     engine::Add(normal_, rename_);
     engine::Add(normal_, remove_);
@@ -71,6 +74,7 @@ PackPanel::PackPanel(Window& window, bool applyOnSelect) : window_(window), appl
 
     SetMode(Mode::Normal);
     ShowMessage({});
+    ShowDraftMark(false);
 }
 
 void PackPanel::SetMode(Mode mode) {
@@ -143,6 +147,8 @@ void PackPanel::Refresh() {
     engine::SetEnabled(remove_, store.selected().has_value());
     refreshing_ = false;
 }
+
+void PackPanel::ShowDraftMark(bool visible) { engine::SetVisible(draftMark_, visible); }
 
 void PackPanel::ShowMessage(const std::string& text) {
     engine::SetText(message_, text);

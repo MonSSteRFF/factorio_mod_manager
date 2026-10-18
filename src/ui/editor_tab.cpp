@@ -108,8 +108,15 @@ void EditorTab::BuildSide(engine::Widget* body, Side& side) {
         Refresh();
     }));
     engine::OnTableSelection(side.table, GuardedHandler<int>("pack table select", [this, &side](int row) {
+        if (highlighting_) return;  // our own Highlight()
         Log("pack table select: row ", row, " of ", static_cast<unsigned long long>(side.shown.size()));
-        if (row >= 0 && static_cast<size_t>(row) < side.shown.size()) Select(side.shown[static_cast<size_t>(row)]);
+        if (row < 0 || static_cast<size_t>(row) >= side.shown.size()) return;
+        Select(side.shown[static_cast<size_t>(row)]);
+        // The clicked table highlights the row itself; the other one lets go.
+        Side& other = &side == &left_ ? right_ : left_;
+        highlighting_ = true;
+        engine::TableSelectRow(other.table, -1);
+        highlighting_ = false;
     }));
 }
 
@@ -132,14 +139,15 @@ EditorTab::Row& EditorTab::EnsureRow(const std::string& name, const std::string&
     row.leftName = Cell(engine::NewLabel(row.title, nameStyle));
     engine::StretchHorizontally(row.leftName);
     row.leftVersion = Cell(engine::NewLabel(version, "label"));
-    row.addButton = Cell(engine::NewTextButton(">", "tool_button"));  // square 28x28
+    // Square 16x16, so rows are as high as on the "Installed" tab (design D5).
+    row.addButton = Cell(engine::NewTextButton(">", "mini_button_aligned_to_text_vertically"));
     engine::SetToolTip(row.addButton, std::string(Text(Str::TipAddToPack)));
     engine::OnClick(row.addButton, GuardedHandler("add to pack", [this, name] { window_.AddMod(name); }));
 
     row.rightName = Cell(engine::NewLabel(row.title, nameStyle));
     engine::StretchHorizontally(row.rightName);
     row.rightVersion = Cell(engine::NewLabel(version, "label"));
-    row.removeButton = Cell(engine::NewTextButton("<", "tool_button"));
+    row.removeButton = Cell(engine::NewTextButton("<", "mini_button_aligned_to_text_vertically"));
     engine::SetToolTip(row.removeButton, std::string(Text(Str::TipRemoveFromPack)));
     engine::OnClick(row.removeButton, GuardedHandler("remove from pack", [this, name] { window_.RemoveMod(name); }));
     return row;
@@ -191,6 +199,19 @@ void EditorTab::Refresh() {
     engine::SetText(left_.header, Format(Str::ColumnAll, std::to_string(leftRows.size())));
     engine::SetText(right_.header, Format(Str::ColumnPack, std::to_string(rightRows.size())));
     engine::SetVisible(hint_, pack == nullptr);
+    Highlight();
+}
+
+void EditorTab::Highlight() {
+    // Rebuilding the rows drops the table's own highlight; restore it on the
+    // table that shows the selected mod (spec mod-pack-editor-tab).
+    highlighting_ = true;
+    for (Side* side : {&left_, &right_}) {
+        auto it = std::find(side->shown.begin(), side->shown.end(), selected_);
+        int row = selected_ && it != side->shown.end() ? static_cast<int>(it - side->shown.begin()) : -1;
+        engine::TableSelectRow(side->table, row);
+    }
+    highlighting_ = false;
 }
 
 void EditorTab::Select(const Row* row) {

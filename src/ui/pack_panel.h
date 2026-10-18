@@ -1,7 +1,7 @@
 // The pack bar shown on the "Installed" tab and on the "Mod packs" tab
 // (specs mod-pack-manage-tab, mod-pack-editor-tab; design D5, D8):
 //
-//   normal:   [ pack list v ] [Create] [Rename] [Delete]  message
+//   normal:   [ pack list v ] * [Create] [Rename] [Delete]  message
 //   naming:   Pack name: [__________] [OK] [Cancel]       message
 //   confirm:  Delete pack "X"?  [Yes] [No]
 //
@@ -27,6 +27,8 @@ public:
     // Re-reads names and selection from the store.
     void Refresh();
     void ShowMessage(const std::string& text);  // empty hides it
+    // The "*" next to the pack list: the selected pack has unwritten checkbox changes.
+    void ShowDraftMark(bool visible);
 
 private:
     enum class Mode { Normal, Create, Rename, Confirm };
@@ -45,6 +47,7 @@ private:
     engine::Widget* root_ = nullptr;
     engine::Widget* normal_ = nullptr;
     engine::Widget* list_ = nullptr;
+    engine::Widget* draftMark_ = nullptr;
     engine::Widget* rename_ = nullptr;
     engine::Widget* remove_ = nullptr;
     engine::Widget* naming_ = nullptr;

@@ -82,6 +82,11 @@ void TableSetOrdering(Widget* table, unsigned column, bool ascending);
 void OnTableOrdering(Widget* table, std::function<void(unsigned, bool)> handler);
 // `handler(row)` with the 0-based row (header excluded), or -1 when nothing is selected.
 void OnTableSelection(Widget* table, std::function<void(int)> handler);
+// Highlights the 0-based `row` (header excluded) or clears the highlight (-1).
+// Calls the OnTableSelection handlers like a click does. No-op if the optional
+// symbol is missing (CanSelectTableRow() is false).
+bool CanSelectTableRow();
+void TableSelectRow(Widget* table, int row);
 
 // Widgets that we keep and re-add ourselves (table cells) are created owned and
 // then released with Disown(); DeleteWidget() destroys such a widget.

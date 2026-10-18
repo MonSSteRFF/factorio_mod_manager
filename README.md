@@ -19,6 +19,8 @@ A pack bar appears to the left of the search box: a drop-down list and the Creat
 ![The "Base space age" pack selected: only the DLCs are enabled](docs/screenshots/installed-tab-base-space-age.png)
 
 - The **drop-down list** shows the selected pack. While there are no packs it says "No mod packs". Choosing a pack sets the mod checkboxes from it: the pack's mods are enabled, all others disabled, `base` is left alone. The changes are applied with the game's own **Confirm** button and the game restarts as usual. If you close the window without confirming, the game offers to discard the changes and nothing changes.
+- **Changing checkboxes while a pack is selected** edits that pack. The changes are kept as a draft and written into the pack when you press **Confirm** (or agree to apply the changes when leaving the window), when you choose another pack in the list, or when you switch to another tab. Until then a `*` is shown next to the list. Only the mods you switched on or off change in the pack; mods of the pack that are not installed stay in it. If you leave the window and discard the changes, the pack is not changed either.
+- **When the window opens**, the list shows the pack that matches the currently enabled mods, or "No pack selected" if none does. Opening the window never changes the checkboxes or the packs.
 - **Create** saves all mods that are currently checked into a new pack. The name is typed right in the bar, then OK or Cancel.
 - **Rename** changes the name of the selected pack. The field starts with the current name.
 - **Delete** removes the selected pack after asking "Delete pack "…"?" with Yes and No. The mod checkboxes are not changed.
@@ -32,10 +34,10 @@ A new tab to the right of "Updates" for putting a pack together.
 ![The Mod packs tab: the "Base space age" pack with mod details on the right](docs/screenshots/mod-packs-tab-base-space-age.png)
 
 - Two tables in the same style as the Installed tab, each taking half of the width. On the left, all installed mods except `base` and those already in the pack. On the right, the mods of the selected pack. The number of mods is shown above each table.
-- Each row has the name, the version and a square button. `>` adds the mod to the pack, `<` removes it. Changes are saved immediately.
+- Each row has the name, the version and a small square button; rows are as high as on the Installed tab. `>` adds the mod to the pack, `<` removes it. Changes are saved immediately.
 - The arrow in the "Name" header sorts the table alphabetically one way or the other; each table has its own direction.
 - The search (magnifier) filters **both** tables at once.
-- Clicking a mod shows the same details on the right as on the Installed tab.
+- Clicking a mod highlights its row and shows the same details on the right as on the Installed tab.
 - Mods of the pack that are not installed are shown in red and marked "not installed".
 - The selected pack is shared with the Installed tab, but selecting a pack here does **not** change the checkboxes: the pack is only opened for editing.
 

@@ -21,10 +21,14 @@ namespace {
 using ModsGuiCtor = void* (*)(void* self);
 using PaneDtor = void (*)(void* self);
 using UpdateTabs = void (*)(void* self);
+using PaneApply = bool (*)(void* self);
+using UpdateRowStyle = void (*)(void* self, void* row);
 
 ModsGuiCtor g_origModsGuiCtor = nullptr;
 PaneDtor g_origPaneDtor = nullptr;
 UpdateTabs g_origUpdateTabs = nullptr;
+PaneApply g_origPaneApply = nullptr;
+UpdateRowStyle g_origUpdateRowStyle = nullptr;
 
 // One Window per open "Mods" window, keyed by its ManageModsPane.
 std::map<void*, std::unique_ptr<Window>> g_windows;
@@ -58,12 +62,36 @@ void HookPaneDtor(void* self) {
     g_origPaneDtor(self);
 }
 
-// After the game shows the info pane of its own tab, show ours for the "Mod packs" tab.
+Window* FindWindow(void* pane) {
+    auto it = g_windows.find(pane);
+    return it != g_windows.end() ? it->second.get() : nullptr;
+}
+
+// After a tab switch: write the pack draft, and after the game shows the info pane
+// of its own tab, show ours for the "Mod packs" tab.
 void HookUpdateTabs(void* self) {
     g_origUpdateTabs(self);
     Guarded("tab switch", [&] {
-        auto it = g_windows.find(engine::ModsGuiManagePane(self));
-        if (it != g_windows.end()) it->second->OnTabsChanged();
+        if (Window* w = FindWindow(engine::ModsGuiManagePane(self))) w->OnTabsChanged();
+    });
+}
+
+// The game applies the checkboxes ("Confirm" or the exit dialog): write the pack draft.
+bool HookPaneApply(void* self) {
+    bool applied = g_origPaneApply(self);
+    Guarded("mods confirmed", [&] {
+        Log("mods confirmed: ", applied ? "applied" : "not applied");
+        if (Window* w = FindWindow(self); w && applied) w->OnConfirmed();
+    });
+    return applied;
+}
+
+// Called for a row after every checkbox click (and on sorting, search, "enable
+// all"); only used to show the "*" mark without delay (design D4).
+void HookUpdateRowStyle(void* self, void* row) {
+    g_origUpdateRowStyle(self, row);
+    Guarded("row restyled", [&] {
+        if (Window* w = FindWindow(self)) w->OnRowRestyled(row);
     });
 }
 
@@ -82,13 +110,26 @@ bool InstallWindowHooks(std::string* error) {
          reinterpret_cast<void**>(&g_origModsGuiCtor)},
         {SymId::ManageModsPane_dtor, "ManageModsPane::~ManageModsPane", reinterpret_cast<void*>(&HookPaneDtor),
          reinterpret_cast<void**>(&g_origPaneDtor)},
+        {SymId::ManageModsPane_updateStyleForModWidgets, "ManageModsPane::updateStyleForModWidgets",
+         reinterpret_cast<void*>(&HookUpdateRowStyle), reinterpret_cast<void**>(&g_origUpdateRowStyle)},
     };
-    // Optional: without it the "Mod packs" tab simply shows no mod details.
-    if (engine::InfoPaneAvailable()) {
+    // Optional: without it a tab switch does not write the pack draft and the
+    // "Mod packs" tab shows no mod details.
+    if (Symbols().has(SymId::ModsGui_updateTabContentsVisibility)) {
         hooks.push_back({SymId::ModsGui_updateTabContentsVisibility, "ModsGui::updateTabContentsVisibility",
                          reinterpret_cast<void*>(&HookUpdateTabs), reinterpret_cast<void**>(&g_origUpdateTabs)});
     } else {
+        Log("ModsGui::updateTabContentsVisibility not found; switching tabs will not write the pack draft");
+    }
+    if (!engine::InfoPaneAvailable()) {
         Log("mod info pane symbols not found; the Mod packs tab will not show mod details");
+    }
+    // Optional: without it confirming the mods does not write the pack draft.
+    if (Symbols().has(SymId::ManageModsPane_apply)) {
+        hooks.push_back({SymId::ManageModsPane_apply, "ManageModsPane::apply", reinterpret_cast<void*>(&HookPaneApply),
+                         reinterpret_cast<void**>(&g_origPaneApply)});
+    } else {
+        Log("ManageModsPane::apply not found; confirming will not write the pack draft");
     }
     std::vector<void*> created;
     auto rollback = [&](const std::string& what, MH_STATUS st) {

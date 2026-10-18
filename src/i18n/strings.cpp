@@ -43,6 +43,10 @@ constexpr std::array<Entry, static_cast<size_t>(Str::Count)> kStrings = {{
     /* NotInstalled */ {"not installed", "не установлен"},
     /* TipAddToPack */ {"Add to the pack", "Добавить в пакет"},
     /* TipRemoveFromPack */ {"Remove from the pack", "Убрать из пакета"},
+    /* DraftMark */ {"*", "*"},
+    /* TipDraft */
+    {"Checkbox changes are not in the pack yet. They are saved to it on Confirm, on switching the pack or on switching tabs.",
+     "Изменения галочек ещё не в пакете. Они сохранятся в него при подтверждении, смене пакета или смене вкладки."},
 }};
 
 Language g_language = Language::En;

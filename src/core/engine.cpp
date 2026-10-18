@@ -301,6 +301,19 @@ void TableSetOrdering(Widget* table, unsigned column, bool ascending) {
     F<Fn>(SymId::TableWithSelection_setColumnOrdering)(table, column, ascending);
 }
 
+bool CanSelectTableRow() { return g_r->has(SymId::TableWithSelection_editSelectedIndex); }
+
+void TableSelectRow(Widget* table, int row) {
+    if (!CanSelectTableRow()) return;
+    using Fn = void (*)(Widget*, unsigned, int);
+    auto select = F<Fn>(SymId::TableWithSelection_editSelectedIndex);
+    // Row indices count the header row as 0; ~0u clears the selection. Clearing
+    // first makes the table restyle the row even if the index stayed the same
+    // while the rows were rebuilt (the call does nothing for an unchanged index).
+    select(table, ~0u, 0);
+    if (row >= 0) select(table, static_cast<unsigned>(row) + 1, 0);
+}
+
 void OnTableOrdering(Widget* table, std::function<void(unsigned, bool)> handler) {
     using Fn = void (*)(Widget*, void*, std::function<void(TableIndex, bool)>);
     F<Fn>(SymId::TableWithSelection_onOrderingChange)(

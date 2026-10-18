@@ -156,3 +156,71 @@ TEST_CASE("assign drops invalid and duplicate packs and unknown selection") {
     store.Assign({{"A", {}}}, std::string("a"));
     CHECK(store.selected() == std::optional<std::string>("A"));
 }
+
+// Scenarios of spec mod-pack-manage-tab: the draft of checkbox changes and the
+// pack selected when the window opens.
+
+TEST_CASE("draft: only changed checkboxes, base ignored") {
+    ModStates baseline{{"base", true}, {"a", true}, {"b", false}, {"c", true}};
+    ModStates current{{"base", false}, {"a", false}, {"b", true}, {"c", true}};
+    ModDelta delta = DraftDelta(baseline, current);
+    CHECK(delta.added == std::vector<std::string>{"b"});
+    CHECK(delta.removed == std::vector<std::string>{"a"});
+}
+
+TEST_CASE("draft: switched off and back on is no change") {
+    ModStates states{{"a", true}, {"b", false}};
+    CHECK(DraftDelta(states, states).empty());
+}
+
+TEST_CASE("draft: mods missing from one snapshot are ignored") {
+    CHECK(DraftDelta({{"a", false}}, {{"a", false}, {"new", true}}).empty());
+    CHECK(DraftDelta({{"gone", true}}, {}).empty());
+}
+
+TEST_CASE("draft: applying keeps untouched and not installed mods") {
+    PackStore store;
+    store.Create("QOL", {"flare-stack", "foo-not-installed", "flib"});
+    unsigned before = store.revision();
+    ModDelta delta{{"krastorio2"}, {"flare-stack"}};
+    CHECK(DeltaChangesPack(*store.Find("QOL"), delta));
+    CHECK(store.ApplyDelta("QOL", delta));
+    CHECK(store.Find("QOL")->mods == std::vector<std::string>{"flib", "foo-not-installed", "krastorio2"});
+    CHECK(store.revision() != before);
+}
+
+TEST_CASE("draft: a delta the pack already has changes nothing") {
+    PackStore store;
+    store.Create("QOL", {"flib"});
+    ModDelta delta{{"flib"}, {"absent"}};
+    CHECK_FALSE(DeltaChangesPack(*store.Find("QOL"), delta));
+    unsigned before = store.revision();
+    CHECK_FALSE(store.ApplyDelta("QOL", delta));
+    CHECK(store.revision() == before);
+    CHECK_FALSE(store.ApplyDelta("unknown", {{"x"}, {}}));
+}
+
+TEST_CASE("open: the pack matching the enabled mods is selected") {
+    std::vector<Pack> packs{{"A", {"a"}}, {"B", {"a", "b"}}};
+    ModStates current{{"base", true}, {"a", true}, {"b", true}, {"c", false}};
+    CHECK(MatchPack(packs, current, std::nullopt) == std::optional<std::string>("B"));
+    CHECK(MatchPack(packs, {{"a", false}, {"b", true}}, std::nullopt) == std::nullopt);
+}
+
+TEST_CASE("open: mods of a pack that are not installed do not prevent a match") {
+    std::vector<Pack> packs{{"QOL", {"a", "missing"}}};
+    CHECK(MatchPack(packs, {{"a", true}, {"b", false}}, std::nullopt) == std::optional<std::string>("QOL"));
+}
+
+TEST_CASE("open: several matches prefer the saved selection, else the first") {
+    std::vector<Pack> packs{{"A", {"a"}}, {"B", {"a"}}, {"C", {"c"}}};
+    ModStates current{{"a", true}, {"c", false}};
+    CHECK(MatchPack(packs, current, std::string_view("b")) == std::optional<std::string>("B"));
+    CHECK(MatchPack(packs, current, std::string_view("C")) == std::optional<std::string>("A"));
+    CHECK(MatchPack(packs, current, std::nullopt) == std::optional<std::string>("A"));
+}
+
+TEST_CASE("open: an empty pack matches when nothing but base is enabled") {
+    std::vector<Pack> packs{{"Vanilla", {}}};
+    CHECK(MatchPack(packs, {{"base", true}, {"a", false}}, std::nullopt) == std::optional<std::string>("Vanilla"));
+}

@@ -65,6 +65,42 @@ ApplyPlan PlanApply(const Pack& pack, const std::vector<std::string>& installed)
     return plan;
 }
 
+ModDelta DraftDelta(const ModStates& baseline, const ModStates& current) {
+    ModDelta delta;
+    for (const auto& [mod, enabled] : current) {
+        if (mod == kBaseMod) continue;
+        auto it = baseline.find(mod);
+        if (it == baseline.end() || it->second == enabled) continue;
+        (enabled ? delta.added : delta.removed).push_back(mod);
+    }
+    return delta;  // sorted: ModStates is ordered by name
+}
+
+bool DeltaChangesPack(const Pack& pack, const ModDelta& delta) {
+    auto has = [&](const std::string& mod) { return std::binary_search(pack.mods.begin(), pack.mods.end(), mod); };
+    return std::any_of(delta.added.begin(), delta.added.end(), [&](const std::string& m) { return !has(m); }) ||
+           std::any_of(delta.removed.begin(), delta.removed.end(), has);
+}
+
+std::optional<std::string> MatchPack(const std::vector<Pack>& packs, const ModStates& current,
+                                     std::optional<std::string_view> preferred) {
+    std::vector<std::string> enabled;
+    for (const auto& [mod, on] : current) {
+        if (on && mod != kBaseMod) enabled.push_back(mod);
+    }
+    std::optional<std::string> first;
+    for (const Pack& pack : packs) {
+        std::vector<std::string> installed;
+        for (const std::string& mod : pack.mods) {
+            if (current.contains(mod)) installed.push_back(mod);
+        }
+        if (installed != enabled) continue;  // both sorted
+        if (preferred && NamesEqual(pack.name, *preferred)) return pack.name;
+        if (!first) first = pack.name;
+    }
+    return first;
+}
+
 const Pack* PackStore::Find(std::string_view name) const {
     for (const Pack& p : packs_) {
         if (NamesEqual(p.name, name)) return &p;
@@ -143,6 +179,19 @@ bool PackStore::RemoveMod(std::string_view pack, std::string_view mod) {
     auto it = std::lower_bound(p->mods.begin(), p->mods.end(), mod);
     if (it == p->mods.end() || *it != mod) return false;
     p->mods.erase(it);
+    Touch();
+    return true;
+}
+
+bool PackStore::ApplyDelta(std::string_view pack, const ModDelta& delta) {
+    Pack* p = FindMutable(pack);
+    if (!p || !DeltaChangesPack(*p, delta)) return false;
+    std::vector<std::string> mods = p->mods;
+    std::erase_if(mods, [&](const std::string& m) {
+        return std::binary_search(delta.removed.begin(), delta.removed.end(), m);
+    });
+    mods.insert(mods.end(), delta.added.begin(), delta.added.end());
+    p->mods = NormalizeMods(std::move(mods));
     Touch();
     return true;
 }

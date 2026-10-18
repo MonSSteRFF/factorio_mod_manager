@@ -2,6 +2,7 @@
 // Engine-independent; the UI layer translates widget events into these calls.
 #pragma once
 
+#include <map>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -21,6 +22,17 @@ enum class NameError {
     None,
     Empty,      // nothing left after trimming
     Duplicate,  // another pack has the same name ignoring case
+};
+
+// Checkbox state of the installed mods: internal name -> enabled.
+using ModStates = std::map<std::string, bool, std::less<>>;
+
+// Mods switched on and off between two checkbox snapshots (spec mod-pack-manage-tab,
+// design D1). Both lists are sorted and never contain `base`.
+struct ModDelta {
+    std::vector<std::string> added;
+    std::vector<std::string> removed;
+    bool empty() const { return added.empty() && removed.empty(); }
 };
 
 // Result of applying a pack to the installed mods.
@@ -63,6 +75,9 @@ public:
 
     bool AddMod(std::string_view pack, std::string_view mod);
     bool RemoveMod(std::string_view pack, std::string_view mod);
+    // Adds `delta.added` and removes `delta.removed`; other mods of the pack,
+    // installed or not, stay. Returns whether the pack changed.
+    bool ApplyDelta(std::string_view pack, const ModDelta& delta);
 
     // Replaces all data (used by the file loader). Normalizes and drops invalid
     // or duplicate entries.
@@ -87,5 +102,18 @@ std::vector<std::string> NormalizeMods(std::vector<std::string> mods);
 // Computes which installed mods are enabled by `pack`. `installed` may contain
 // `base`, which is skipped.
 ApplyPlan PlanApply(const Pack& pack, const std::vector<std::string>& installed);
+
+// Mods whose checkbox differs between `baseline` and `current`. Mods present in
+// only one snapshot are ignored, so a mod switched on and back off is no change.
+ModDelta DraftDelta(const ModStates& baseline, const ModStates& current);
+
+// Whether ApplyDelta(pack, delta) would change the pack.
+bool DeltaChangesPack(const Pack& pack, const ModDelta& delta);
+
+// The pack whose installed mods are exactly the enabled mods of `current`
+// (`base` ignored, mods of the pack that are not installed ignored). With several
+// matches `preferred` wins if it is one of them, otherwise the first in `packs`.
+std::optional<std::string> MatchPack(const std::vector<Pack>& packs, const ModStates& current,
+                                     std::optional<std::string_view> preferred);
 
 }  // namespace modpacks

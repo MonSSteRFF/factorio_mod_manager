@@ -49,6 +49,8 @@ MP_FUNC(operatorNew, "??2@YAPEAX_K@Z", true)
 MP_FUNC(ModsGui_ctor, "??0ModsGui@@QEAA@XZ", true)
 MP_FUNC(ManageModsPane_dtor, "??1ManageModsPane@@UEAA@XZ", true)
 MP_FUNC(ModsGui_updateTabContentsVisibility, "?updateTabContentsVisibility@ModsGui@@AEAAXXZ", false)
+// Optional: without it confirming the mods does not write the pack draft (design D2).
+MP_FUNC(ManageModsPane_apply, "?apply@ManageModsPane@@QEAA_NXZ", false)
 
 // --- ManageModsPane ---------------------------------------------------------------
 MP_FUNC(ManageModsPane_updateStyleForModWidgets, "?updateStyleForModWidgets@ManageModsPane@@AEBAXAEAVModWidgets@1@@Z", true)
@@ -143,6 +145,8 @@ MP_FUNC(Table_alignColumn, "?alignColumn@Table@agui@@QEAAAEAV12@HW4AreaAlign@2@@
 MP_ENUM(AreaAlign_LeftMiddle, "agui::AreaAlign", "LeftMiddle", true)
 MP_ENUM(AreaAlign_RightMiddle, "agui::AreaAlign", "RightMiddle", true)
 MP_VSLOT(Widget_vDelete, "??_7Widget@agui@@6B@", "??_GWidget@agui@@UEAAPEAXI@Z", true)
+// Optional: without it the selected mod is not highlighted in the "Mod packs" tables.
+MP_FUNC(TableWithSelection_editSelectedIndex, "?editSelectedIndex@TableWithSelection@agui@@QEAAXIH@Z", false)
 
 // --- equal column widths -------------------------------------------------------------
 MP_FIELD(VerticalFlow_style, "agui::VerticalFlow", "style", true)
